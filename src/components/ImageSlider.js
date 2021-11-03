@@ -1,35 +1,48 @@
 import { DataSlider } from "./DataSlider";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
-import { useState } from "react";
+import { useRef } from "react";
 const ImageSlider = () => {
-  const [current, setCurrent] = useState(0);
   const length = DataSlider.length;
-  const nextSlide = () => setCurrent(current === length - 1 ? 0 : current + 1);
-  const prevSlide = () => setCurrent(current === 0 ? length - 1 : current - 1);
+  const listRef = useRef(null);
+  const scrollLeft = () => {
+    if (listRef.current) {
+      listRef.current.scrollBy({
+        top: 0,
+        left: -500,
+        behavior: "smooth",
+      });
+    }
+    console.log(listRef.current);
+  };
+  const scrollRight = () => {
+    if (listRef.current) {
+      listRef.current.scrollBy({
+        top: 0,
+        left: 500,
+        behavior: "smooth",
+      });
+    }
+  };
   if (!Array.isArray(DataSlider) || length <= 0) return null;
-  console.log(current);
+
   return (
     <>
-      <div className="slider">
-        <FaArrowAltCircleLeft className="arrow-left" onClick={prevSlide} />
-        <FaArrowAltCircleRight className="arrow-right" onClick={nextSlide} />
-        {DataSlider.map((slider, index) => {
-          return (
-            <div
-              key={index}
-              className={index === current ? "active" : "disabled"}
-            >
-              {current === index && (
+      <div className="slider-container">
+        <FaArrowAltCircleLeft className="arrow-left" onClick={scrollLeft} />
+        <FaArrowAltCircleRight className="arrow-right" onClick={scrollRight} />
+        <div className="items-container" ref={listRef}>
+          {DataSlider.map((slider, index) => {
+            return (
+              <div key={index} className="single-item-container">
                 <img
-                  key={index}
                   src={slider.imageURL}
                   alt="slider food"
                   className="image"
                 />
-              )}
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </>
   );
